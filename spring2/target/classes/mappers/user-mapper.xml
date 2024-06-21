@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.itwill.spring2.repository.UserDao">
+
+    <!-- 아이디 중복 체크 -->
+    <select id="selectByUserid" resultType="User">
+        select * from users where userid = #{userid}
+    </select>
+    
+    <!-- 회원 가입 -->
+    <insert id="insert">
+        insert into users (userid, password, email)
+        values (#{userid}, #{password}, #{email})
+    </insert>
+    
+    <!-- 로그인 -->
+    <select id="selectByUseridAndPassword" resultType="User">
+        select * from users
+        where userid = #{userid} and password = #{password}
+    </select>
+    
+    <!-- 회원가입시 자동으로 생성되는 users id컬럼(pk) select -->
+    <select id="selectId" resultType="User">
+        select id from users
+        where userid = #{userid}
+    </select>
+    
+    <!-- 프로필 insert 회원가입시 같이 호출해서 생성함.(users테이블의 자동으로 생기는id를 select해와서 insert해야함 -->
+    <insert id="insertProfile">
+        insert into profile (userid)
+        values (#{userid})
+    </insert>
+    
+</mapper>
