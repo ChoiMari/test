@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.itwill.spring2.repository.CommentsDao">
+
+    <!-- postId로 해당 게시글의 댓글을 가져오는 sql문 -->
+    <select id="selectByPostId" resultType="Comments">
+        select * from comments
+        where post_id = #{postId}
+        order by id desc
+    </select>
+    
+    <!--공개 댓글 등록(insert) sql문-->
+    <insert id="insertComments">
+        insert into comments (post_id, user_id, content)
+        values (#{postId}, #{userId}, #{content})
+    </insert>
+    
+    <!--비공개 댓글 등록(insert) sql문-->
+    <insert id="insertPrivateComments">
+        insert into comments (post_id, user_id, content, is_private)
+        values (#{postId}, #{userId}, #{content}, 1)
+    </insert>
+    
+    <!--공개 대댓글 등록(insert) sql문. 대댓글에서 누르는 등록 버튼 누르면 호출-->
+    <insert id="insertReplyComments">
+        insert into comments (post_id, user_id, content, parent_comment_id)
+        values (#{postId}, #{userId}, #{content}, #{parentCommentId})
+    </insert>
+    
+    <!--비공개 대댓글 등록(insert) sql문. 대댓글에서 누르는 등록 버튼 누르면 호출-->
+    <insert id="insertPrivateReplyComments">
+        insert into comments (post_id, user_id, content, parent_comment_id, is_private)
+        values (#{postId}, #{userId}, #{content}, #{parentCommentId}, 1)
+    </insert>
+    
+    <!-- 댓글 수정 sql문 수정버튼 누르면 공개 비공개도 수정가능 함. -->
+    <update id="update">
+        update comments
+        set content = #{content}, is_private = #{isPrivate}, modified_time = systimestamp
+        where comments_id = #{commentsId}
+    </update>
+    
+    <!--댓글pk로 댓글 삭제 -->
+    <delete id="deleteById">
+        delete from comments where comments_id = #{commentsId}
+    </delete>
+    
+    
+    <delete id="deleteByPostId">
+        delete from comments where post_id = #{postId}
+    </delete>
+    
+    <select id="selectCommentCount" resultType="integer">
+        select count(*) from comments where post_id = #{postId}
+    </select>
+    
+    <select id="selectById" resultType="Comment">
+        select * from comments where id = #{id}
+    </select>
+</mapper>
